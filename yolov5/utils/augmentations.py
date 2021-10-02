@@ -17,11 +17,14 @@ from utils.metrics import bbox_ioa
 class Albumentations:
     # YOLOv5 Albumentations class (optional, only used if package is installed)
     def __init__(self):
+
         self.transform = None
         try:
+            
             import albumentations as A
+            import albumentations.pytorch as AP
             check_version(A.__version__, '1.0.3')  # version requirement
-
+            '''
             self.transform = A.Compose([
                 A.Blur(p=0.01),
                 A.MedianBlur(p=0.01),
@@ -31,7 +34,30 @@ class Albumentations:
                 A.RandomGamma(p=0.0),
                 A.ImageCompression(quality_lower=75, p=0.0)],
                 bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
-
+            import albumentations as A
+            '''
+            #### MODIFY START ####
+            self.transform = A.Compose([
+                A.Resize(640,640),
+                A.RandomResizedCrop(height=480,
+                                    width=480,
+                                    scale=(0.5, 1.0),
+                                    ratio=(0.75, 1.25),
+                                    interpolation=cv2.INTER_AREA, # For downsampling
+                                    always_apply=False,
+                                    p=0.3),
+                A.HorizontalFlip(p=0.5),
+                A.RandomBrightnessContrast(p=0.3),
+                A.Affine(rotate=(-180, 180),
+                          shear=(-45, 45),
+                          p=0.5),
+                A.Blur(p=0.1),
+                A.MedianBlur(p=0.1),
+                AP.ToTensorV2(),
+                A.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+                ],
+                bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
+            #### MODIFY END ####
             logging.info(colorstr('albumentations: ') + ', '.join(f'{x}' for x in self.transform.transforms if x.p))
         except ImportError:  # package not installed, skip
             pass
