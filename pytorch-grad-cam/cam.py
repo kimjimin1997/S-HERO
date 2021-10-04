@@ -72,7 +72,8 @@ if __name__ == '__main__':
          "layercam": LayerCAM,
          "fullgrad": FullGrad}
 
-    model = models.resnet50(pretrained=True)
+    model = models.resnet50(pretrained=True) # 사전학습된 모델 사용, resnet
+    # 이걸 yolo로 바꿀 수 있을까??
 
     # Choose the target layer you want to compute the visualization for.
     # Usually this will be the last convolutional layer in the model.

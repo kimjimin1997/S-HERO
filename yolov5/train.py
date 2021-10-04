@@ -380,8 +380,10 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
 
                 # Save last, best and delete
                 torch.save(ckpt, last)
+                torch.save()
                 if best_fitness == fi:
-                    torch.save(ckpt, best)
+                    torch.save(ckpt, best) # last, best는 경로
+                    torch.save(ckpt['model'].state_dict(), best) ## ADDED
                 del ckpt
                 callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
 
